@@ -82,18 +82,18 @@ app.post('/links',
 app.post('/signup',
   (req, res) => {
     // First check if the username exists in the users table
-    console.log('Req Body Username -----', req.body.username);
     return models.Users.get({username: req.body.username})
       .then( (searchResult) => {
         // If it exists, throw error
         if(searchResult !== undefined) throw new error;
-        console.log("Req Body pt 2 -----", req.body);
         return models.Users.create(req.body)
-          .then(json => {res.status(201).json(json);})
-          .catch(e => {res.status(400).json(e);});
+          .then(json => {res.status(201).location('/').end();})
+          .catch(e => {res.status(400).location('/signup').end();});
       })
-      .catch(e => {res.status(400).json(e);});
+      // Change this response
+      .catch(e => {res.status(400).location('/signup').end();});
   });
+
 
 
 /************************************************************/
