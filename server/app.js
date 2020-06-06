@@ -10,12 +10,18 @@ const app = express();
 
 app.set('views', `${__dirname}/views`);
 app.set('view engine', 'ejs');
+
+
+
 app.use(partials());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
 app.use(express.static(path.join(__dirname, '../public')));
 
-
+var cookieParser = require('./middleware/cookieParser.js');
+app.use(cookieParser);
+app.use(Auth.createSession);
 
 app.get('/',
 (req, res) => {
@@ -82,16 +88,21 @@ app.post('/links',
 app.post('/signup',
   (req, res) => {
     // First check if the username exists in the users table
+
     return models.Users.get({username: req.body.username})
       .then( (searchResult) => {
         // If it exists, throw error
         if(searchResult !== undefined) throw new error;
         return models.Users.create(req.body)
-          .then(json => {res.status(201).location('/').end();})
-          .catch(e => {res.status(400).location('/signup').end();});
+          .then(json => {res.status(201).location('/');})
+          .catch(e => {res.status(400).location('/signup');});
       })
-      // Change this response
-      .catch(e => {res.status(400).location('/signup').end();});
+      .then(()=>{    res.end();})
+      .catch(e => {
+        // Change this response
+        res.status(400).location('/signup').end();
+      });
+
   });
 
   // Create post request for log in

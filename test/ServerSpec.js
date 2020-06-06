@@ -141,6 +141,7 @@ describe('', function() {
         db.query(queryString, function(err, rows) {
           if (err) { done(err); }
           var user = rows[0];
+          console.log('user - ', user);
           expect(user).to.exist;
           expect(user.username).to.equal('Samantha');
           done();
@@ -203,6 +204,7 @@ describe('', function() {
 
       request(options, function(error, res, body) {
         if (error) { return done(error); }
+        console.log('user creation in Signup ', res.headers);
         expect(res.headers.location).to.equal('/');
         done();
       });
@@ -481,7 +483,7 @@ describe('', function() {
     });
   });
 
-  xdescribe('Sessions and cookies', function() {
+  describe('Sessions and cookies', function() {
     var requestWithSession;
     var cookieJar;
 

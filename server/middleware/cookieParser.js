@@ -4,10 +4,7 @@ const parseCookies = (req, res, next) => {
   req.cookies = {};
   var rawCookies = req.headers.cookie;
   // .split(';'); - to make one line of object init... (Create an array)
-  if (rawCookies === undefined) {
-    // req.cookies.shortlyid = -1;
-    next();
-  } else {
+  if (rawCookies !== undefined) {
     var cookieArray = rawCookies.split(';');
     // For loop the array
     for (let i = 0; i < cookieArray.length; i++) {

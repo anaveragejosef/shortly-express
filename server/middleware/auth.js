@@ -26,7 +26,8 @@ module.exports.createSession = (req, res, next) => {
   // if no cookie,
   // console.log('createSession check sessions');
   //if (Object.keys(req.cookies).length === 0) {
-  if (req.cookies.shortlyid === undefined) {
+
+  if (req.cookies === undefined || req.cookies.shortlyid === undefined) {
     //  create new session
     return models.Sessions.create()
       .then(results => {
@@ -36,40 +37,44 @@ module.exports.createSession = (req, res, next) => {
           .then(sessionResult => {
             var parsedSession = JSON.parse(JSON.stringify(sessionResult));
             // console.log('ParsedSession ---- ', parsedSession);
+            res.cookies = {};
             res.cookies.shortlyid = {
               value: parsedSession.hash
             };
             req.session = parsedSession;
-            console.log('Create Session ' , parsedSession);
+            // console.log('Create Session ', parsedSession);
 
-            next();
+
           });
-      });
+      })
+      .finally(()=>{next();});
+
   } else {
-    console.log('Req.cookies > 0 - ', req.cookies);  // Req.cookies > 0 -  { shortlyid: 'adb1914e9fbc440d6a337a7340e836437b12be097433d5a58d54e41ef974504d' }
+    // console.log('Req.cookies > 0 - ', req.cookies); // Req.cookies > 0 -  { shortlyid: 'adb1914e9fbc440d6a337a7340e836437b12be097433d5a58d54e41ef974504d' }
 
     // Retrieve session info using existing hash
-    console.log('Shortlyid - ', req.cookies.shortlyid);
+    // console.log('Shortlyid - ', req.cookies.shortlyid);
     return models.Sessions.get({hash: req.cookies.shortlyid})
       .then(sessionResult => {
         if (sessionResult !== undefined) {
-          console.log('Return statement session result - ', sessionResult);
+          // console.log('Return statement session result - ', sessionResult);
           // Parse data
           var parsedSession = JSON.parse(JSON.stringify(sessionResult));
           // Tie session data to the req.session
           req.session = parsedSession;
 
-          next();
+          // next();
         } else {
           // How to handle bad/malicious cookies
           res.cookies.shortlyid = '0';
-          next();
+          // next();
         }
       })
+      .finally(()=>{next();});
   }
   // if cookie with matching session id
   //    req.session = session
-  next();
+  // next();
 };
 
 /************************************************************/
