@@ -17,17 +17,17 @@ app.use(express.static(path.join(__dirname, '../public')));
 
 
 
-app.get('/', 
+app.get('/',
 (req, res) => {
   res.render('index');
 });
 
-app.get('/create', 
+app.get('/create',
 (req, res) => {
   res.render('index');
 });
 
-app.get('/links', 
+app.get('/links',
 (req, res, next) => {
   models.Links.getAll()
     .then(links => {
@@ -38,7 +38,7 @@ app.get('/links',
     });
 });
 
-app.post('/links', 
+app.post('/links',
 (req, res, next) => {
   var url = req.body.url;
   if (!models.Links.isValidUrl(url)) {
@@ -54,7 +54,8 @@ app.post('/links',
       return models.Links.getUrlTitle(url);
     })
     .then(title => {
-      return models.Links.create({
+      return model
+      s.Links.create({
         url: url,
         title: title,
         baseUrl: req.headers.origin
@@ -78,6 +79,21 @@ app.post('/links',
 // Write your authentication routes here
 /************************************************************/
 
+app.post('/signup',
+  (req, res) => {
+    // First check if the username exists in the users table
+    console.log('Req Body Username -----', req.body.username);
+    return models.Users.get({username: req.body.username})
+      .then( (searchResult) => {
+        // If it exists, throw error
+        if(searchResult !== undefined) throw new error;
+        console.log("Req Body pt 2 -----", req.body);
+        return models.Users.create(req.body)
+          .then(json => {res.status(201).json(json);})
+          .catch(e => {res.status(400).json(e);});
+      })
+      .catch(e => {res.status(400).json(e);});
+  });
 
 
 /************************************************************/
