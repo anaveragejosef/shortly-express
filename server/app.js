@@ -78,7 +78,7 @@ app.post('/links',
 /************************************************************/
 // Write your authentication routes here
 /************************************************************/
-
+////
 app.post('/signup',
   (req, res) => {
     // First check if the username exists in the users table
@@ -94,6 +94,27 @@ app.post('/signup',
       .catch(e => {res.status(400).location('/signup').end();});
   });
 
+  // Create post request for log in
+  app.post('/login',
+  (req, res) => {
+    // First check if the username exists in the users table
+    return models.Users.get({username: req.body.username})
+      .then( (searchResult) => {
+        // If user exists, throw error
+        var parsedSearch = JSON.parse(JSON.stringify(searchResult));
+        if (typeof parsedSearch !== 'object') {
+          throw new error;
+        }
+
+        if (models.Users.compare(req.body.password, parsedSearch.password, parsedSearch.salt)) {
+          res.status(201).location('/').end();
+        } else {
+          res.status(400).location('/login').end();
+        }
+      })
+      .catch(e => {
+        res.status(400).location('/login').json(e).end();});
+  });
 
 
 /************************************************************/

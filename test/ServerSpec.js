@@ -62,7 +62,7 @@ describe('', function() {
     afterEach(function() { server.close(); });
   });
 
-  describe('Database Schema:', function() {
+  xdescribe('Database Schema:', function() {
     it('contains a users table', function(done) {
       var queryString = 'SELECT * FROM users';
       db.query(queryString, function(err, results) {
@@ -124,7 +124,7 @@ describe('', function() {
     });
   });
 
-  describe('Account Creation:', function() {
+  xdescribe('Account Creation:', function() {
 
     it('signup creates a new user record', function(done) {
       var options = {
@@ -209,7 +209,7 @@ describe('', function() {
     });
   });
 
-  xdescribe('Account Login:', function() {
+  describe('Account Login:', function() {
 
     beforeEach(function(done) {
       var options = {
